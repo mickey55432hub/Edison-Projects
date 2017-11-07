@@ -1,3 +1,103 @@
+------------------------------------------------------------------------------------
+var Sonar = require('raspi-sonar').Sonar;
+var sonarPin1 = new Sonar(29);
+ 
+sonarPin1.read(function(duration) {
+  var distance = 343.0 * duration / 1000000 * .5;
+  console.log('duration: ' + duration + ' distance: ' + distance + 'm');
+});
+
+- - - - -- - -- - - - -- - - -- - - - -- - - -- - - -- - - -- - - -- - - - -
+------------------------------------------------------------------------------------
+/*Creates a new ultrasonic sensor function and returns it. 
+The measurement timeout has a default value of 750 µs*/
+var sensor = usonic.sensor(18, 17, 1000);
+setTimeout(function() {
+    console.log('Distance: ' + sensor().toFixed(2) + ' cm');
+}, 60);
+
+
+
+
+------------------------------------------------------------------------------------
+
+
+//Returns the distance in cm if no measurement
+ //timeout occurs, and -1 otherwise.
+ var distance = sensor();
+var statistics = require('math-statistics');
+var usonic = require('r-pi-usonic');
+ 
+var init = function(config) {
+    var sensor = usonic.sensor(config.echoPin, config.triggerPin, config.timeout);
+    //console.log(config);
+    var distances;
+ 
+    (function measure() {
+        if (!distances || distances.length === config.rate) {
+            if (distances) {
+                print(distances);
+            }
+ 
+            distances = [];
+        }
+ 
+        setTimeout(function() {
+            distances.push(sensor());
+ 
+            measure();
+        }, config.delay);
+    }());
+};
+ 
+var print = function(distances) {
+    var distance = statistics.median(distances);
+ 
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
+ 
+    if (distance < 0) {
+        process.stdout.write('Error: Measurement timeout.\n');
+    } else {
+        process.stdout.write('Distance: ' + distance.toFixed(2) + ' cm');
+    }
+};
+ 
+init({
+    echoPin: 18, //Echo pin
+    triggerPin: 17, //Trigger pin
+    timeout: 1000, //Measurement timeout in µs
+    delay: 60, //Measurement delay in ms
+    rate: 5 //Measurements per sample
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-0 0 0 0 0-----------------------------------------------------------
 /**
  * Class to monitor distance measured by an HC-SR04 distance sensor on a 
  * Raspberry Pi.
